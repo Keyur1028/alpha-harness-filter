@@ -25,15 +25,14 @@ FIELDS: dict[str, type] = {
     "scope": str,
     "exclusions": list,
     "regions": list,
+    "directions": list,
     "hypotheses": list,
 }
 
 SCHEMA: dict[str, Any] = {
     "type": "object",
     "properties": {
-        key: {"type": "string"}
-        if kind is str
-        else {"type": "array", "items": {"type": "string"}}
+        key: {"type": "string"} if kind is str else {"type": "array", "items": {"type": "string"}}
         for key, kind in FIELDS.items()
     },
     "required": list(FIELDS),
@@ -43,7 +42,8 @@ SCHEMA: dict[str, Any] = {
 SYSTEM = (
     "You turn a monthly quantitative research theme into a research blueprint. Describe economic "
     "mechanisms and testable hypotheses in plain language. Do not write alpha expressions or "
-    "name fields that are not in the announcement. Answer only with the JSON object requested."
+    "name fields that are not in the announcement. Split the theme into independent research "
+    "directions, then state hypotheses under them. Answer only with the JSON object requested."
 )
 
 
@@ -61,8 +61,8 @@ def checked(raw: str) -> dict[str, Any]:
             ok = isinstance(value, list) and all(isinstance(item, str) for item in value)
         if not ok:
             raise ValueError(f"blueprint field {key!r} must be a non-empty {kind.__name__}")
-    if not data["hypotheses"]:
-        raise ValueError("blueprint has no hypotheses")
+    if not data["directions"] or not data["hypotheses"]:
+        raise ValueError("blueprint needs at least one direction and one hypothesis")
     return data
 
 
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     for raw in broken:
         try:
             checked(raw)
-        except (ValueError, json.JSONDecodeError):
+        except ValueError, json.JSONDecodeError:
             continue
         raise SystemExit(f"theme self-check: accepted a bad blueprint: {raw[:60]}")
     sys.stdout.write(f"{len(broken)} bad blueprints rejected\n")

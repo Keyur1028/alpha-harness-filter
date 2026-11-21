@@ -5,7 +5,7 @@
 
 ## Current milestone
 
-**M1 — Theme intelligence: module and table done. API route and UI not yet built.**
+**M1 — Theme intelligence: code complete except scope management and the live model check. Uncommitted: blocked by the pre-commit gate (see Blockers).**
 Article: user supplied the reference doc (`34849095-harness_engineering_article_agent_reference.md`); §0.3 mapping done (integration-map §6). Original Medium page still not retrievable.
 
 ## Completed
@@ -18,7 +18,12 @@ Article: user supplied the reference doc (`34849095-harness_engineering_article_
 ## Remaining (by milestone)
 
 - [x] M1 Theme intelligence (partial) — `research/theme.py` (`checked`, `draft`, `add`), table `research_theme`. Verified: self-check, temp-DB end-to-end with a fake model (no quota), ruff, basedpyright 0 errors.
-- [ ] M1 remaining — theme alignment validator (`research/alignment.py`), API route for import, decomposition into directions.
+- [x] Decomposition into `directions`: added to the same blueprint call (no extra model call).
+- [x] Alignment validator `research/alignment.py`: stage A keywords and exclusions, stage B a verifier model only when unsure. Only `aligned` is admitted; unsure, error and unreachable reject. Verdicts stored in `research_alignment`.
+- [x] API: `POST /api/research/themes`, `GET /api/research/themes`, `POST /api/research/themes/{id}/check`. `generated.ts` regenerated; contract check passes.
+- [ ] Scope management (spec §1.4: narrow, broad, regional). Not started.
+- [ ] Live model check on real Gemini and Groq output. Needs a configured key and quota.
+- [ ] Hypothesis gate wiring: the verifier is in place, but hypotheses are plain strings until M2 adds the hypothesis table.
 - [ ] M2 Research memory — new tables in `db/models.py` via `migrate()`.
 - [ ] M3 Specialist roles — prompt templates + Director function (no new processes).
 - [ ] M4 Candidate generation — Power Pool/Template feeds + Vault theme pass.
@@ -104,3 +109,9 @@ Conflicts with the decision above where marked (⚠).
 - Added `ResearchTheme` to `db/models.py` (created by `create_all`, no migration step needed).
 - Added `backend/src/alpha_harness/research/theme.py`. Drafting uses one `LLMService.generate` call, temperature 0.2, strict schema, and the blueprint is kept only if `checked` passes.
 - Not done in M1: API route (needs `lefthook run format` to regenerate `generated.ts`), alignment validator, decomposition. Live model call not run: no key or quota used.
+
+## Blockers (2026-11-21 14:20)
+
+- The pre-commit gate (`lefthook run check`) fails in this sandbox at `fastexpr`: rustup cannot download the pinned Rust 1.99.1 (`static.rust-lang.org` is unreachable). Every other check passes. Commits are refused, by design, so the gate is not bypassed.
+- Fix options: run the commit on a machine with Rust 1.99.1 and the wasm target, or allow `static.rust-lang.org` in the sandbox network.
+- Crate unchanged in this work, so the committed `fastexpr.wasm` remains the correct build. Only the freshness check is unverified here.
