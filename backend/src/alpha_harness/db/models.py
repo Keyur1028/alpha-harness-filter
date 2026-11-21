@@ -664,3 +664,18 @@ class LLMModel(Base):
     # An index rather than a table constraint, so a database that already has the table
     # gains it on startup: SQLite cannot add a constraint to a live table.
     __table_args__ = (Index("uq_llm_model_provider_model", "provider", "model", unique=True),)
+
+
+# --- research (theme-driven alpha research) ------------------------------
+
+
+class ResearchTheme(Base):
+    """A monthly research theme: the announcement as given, and the blueprint drafted from it."""
+
+    __tablename__ = "research_theme"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    announcement: Mapped[str] = mapped_column(Text)
+    blueprint: Mapped[dict[str, Any]] = mapped_column(JSON)
+    model: Mapped[str] = mapped_column(String(128))  # the model ref that drafted it
+    created_at: Mapped[datetime] = mapped_column(UtcDateTime, default=utcnow)

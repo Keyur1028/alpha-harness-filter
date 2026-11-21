@@ -5,7 +5,7 @@
 
 ## Current milestone
 
-**M0 — Repository and article audit: complete (integration map written).**
+**M1 — Theme intelligence: module and table done. API route and UI not yet built.**
 Article: user supplied the reference doc (`34849095-harness_engineering_article_agent_reference.md`); §0.3 mapping done (integration-map §6). Original Medium page still not retrievable.
 
 ## Completed
@@ -17,7 +17,8 @@ Article: user supplied the reference doc (`34849095-harness_engineering_article_
 
 ## Remaining (by milestone)
 
-- [ ] M1 Theme intelligence — `research/theme.py`, `research/alignment.py`, blueprint JSON.
+- [x] M1 Theme intelligence (partial) — `research/theme.py` (`checked`, `draft`, `add`), table `research_theme`. Verified: self-check, temp-DB end-to-end with a fake model (no quota), ruff, basedpyright 0 errors.
+- [ ] M1 remaining — theme alignment validator (`research/alignment.py`), API route for import, decomposition into directions.
 - [ ] M2 Research memory — new tables in `db/models.py` via `migrate()`.
 - [ ] M3 Specialist roles — prompt templates + Director function (no new processes).
 - [ ] M4 Candidate generation — Power Pool/Template feeds + Vault theme pass.
@@ -97,3 +98,9 @@ Conflicts with the decision above where marked (⚠).
 - Hypothesis gate: on. A free verifier must pass a hypothesis before any expression is written. Verifier: openai/gpt-oss-120b (Groq).
 - Tracking: this file (`RESEARCH_TRACKING.md`) is the committed tracker. `docs/` stays local because it is gitignored.
 - M1 scope: theme ingestion and blueprint only. No simulations, no live BRAIN calls.
+
+## M1 status (2026-11-21)
+
+- Added `ResearchTheme` to `db/models.py` (created by `create_all`, no migration step needed).
+- Added `backend/src/alpha_harness/research/theme.py`. Drafting uses one `LLMService.generate` call, temperature 0.2, strict schema, and the blueprint is kept only if `checked` passes.
+- Not done in M1: API route (needs `lefthook run format` to regenerate `generated.ts`), alignment validator, decomposition. Live model call not run: no key or quota used.
