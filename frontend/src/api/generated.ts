@@ -1739,6 +1739,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/research/themes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Themes */
+        get: operations["list_themes_api_research_themes_get"];
+        put?: never;
+        /** Add Theme */
+        post: operations["add_theme_api_research_themes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/research/themes/{theme_id}/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Check Candidate */
+        post: operations["check_candidate_api_research_themes__theme_id__check_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/search-lab/options": {
         parameters: {
             query?: never;
@@ -2611,6 +2646,25 @@ export interface components {
             /** Cost Bps */
             cost_bps: number;
         };
+        /** AlignmentOut */
+        AlignmentOut: {
+            /** Admitted */
+            admitted: boolean;
+            /** Confidence */
+            confidence: number;
+            /** Id */
+            id: number;
+            /** Method */
+            method: string;
+            /** Reason */
+            reason: string;
+            /** Status */
+            status: string;
+            /** Subject */
+            subject: string;
+            /** Themeid */
+            themeId: number;
+        };
         /** AlphaClassification */
         AlphaClassification: {
             /** Id */
@@ -3160,6 +3214,11 @@ export interface components {
         Cancelled: {
             /** Cancelled */
             cancelled: boolean;
+        };
+        /** CandidateIn */
+        CandidateIn: {
+            /** Text */
+            text: string;
         };
         /** CatalogCounts */
         CatalogCounts: {
@@ -6169,6 +6228,29 @@ export interface components {
                 [key: string]: components["schemas"]["FieldsVariable"] | components["schemas"]["ValuesVariable"];
             };
         };
+        /** ThemeIn */
+        ThemeIn: {
+            /** Announcement */
+            announcement: string;
+            /**
+             * Model
+             * @default google:gemini-3.8-flash
+             */
+            model: string;
+        };
+        /** ThemeOut */
+        ThemeOut: {
+            /** Announcement */
+            announcement: string;
+            /** Blueprint */
+            blueprint: {
+                [key: string]: unknown;
+            };
+            /** Id */
+            id: number;
+            /** Model */
+            model: string;
+        };
         /** ThreadScope */
         ThreadScope: {
             /** Delay */
@@ -9051,6 +9133,94 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Quitting"];
+                };
+            };
+        };
+    };
+    list_themes_api_research_themes_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ThemeOut"][];
+                };
+            };
+        };
+    };
+    add_theme_api_research_themes_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ThemeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ThemeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    check_candidate_api_research_themes__theme_id__check_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                theme_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CandidateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AlignmentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

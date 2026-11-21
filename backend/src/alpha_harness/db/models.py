@@ -664,3 +664,33 @@ class LLMModel(Base):
     # An index rather than a table constraint, so a database that already has the table
     # gains it on startup: SQLite cannot add a constraint to a live table.
     __table_args__ = (Index("uq_llm_model_provider_model", "provider", "model", unique=True),)
+
+
+# --- research (theme-driven alpha research) ------------------------------
+
+
+class ResearchTheme(Base):
+    """A monthly research theme: the announcement as given, and the blueprint drafted from it."""
+
+    __tablename__ = "research_theme"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    announcement: Mapped[str] = mapped_column(Text)
+    blueprint: Mapped[dict[str, Any]] = mapped_column(JSON)
+    model: Mapped[str] = mapped_column(String(128))  # the model ref that drafted it
+    created_at: Mapped[datetime] = mapped_column(UtcDateTime, default=utcnow)
+
+
+class ResearchAlignment(Base):
+    """Whether one candidate (a hypothesis or an expression) belongs to a theme, and why."""
+
+    __tablename__ = "research_alignment"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    theme_id: Mapped[int] = mapped_column(ForeignKey("research_theme.id"), index=True)
+    subject: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(16))  # aligned | rejected
+    confidence: Mapped[float] = mapped_column(Float)
+    reason: Mapped[str] = mapped_column(Text)
+    method: Mapped[str] = mapped_column(String(16))  # keywords | exclusion | semantic | error
+    created_at: Mapped[datetime] = mapped_column(UtcDateTime, default=utcnow)

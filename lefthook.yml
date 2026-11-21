@@ -33,6 +33,11 @@ pre-commit:
       # At the repository root, so the bare name is the whole path and does match.
       glob: "DESIGN.md"
       run: sh frontend/tools/design-lint.sh DESIGN.md
+    # Every CI check, so a commit CI would reject is refused here. Runs on every commit,
+    # which is slower than the jobs above (about a minute); CI runs the same stage.
+    - name: check
+      # Pinned like CI's own call; a bare `lefthook` is not on PATH inside a git hook.
+      run: uvx lefthook@2.1.14 run check
 
 dev:
   parallel: true
